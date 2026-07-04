@@ -7,7 +7,6 @@ exports.getInventory = async (client , user_id)=>{
                 i.item_id,
                 i.created_at AS acquired_at,
                 it.title,
-                it.price
              FROM inventory i
              JOIN items it ON i.item_id = it.id
              WHERE i.user_id = $1
@@ -15,5 +14,5 @@ exports.getInventory = async (client , user_id)=>{
             [user_id]
         );
 
-         return inventory;
+         return inventory.rows[0];
 }

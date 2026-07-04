@@ -5,15 +5,15 @@ exports.findByKey = async (client, key) => {
     );
 };
 
-exports.storeTransaction = async (client,walletId ,idempotencyKey, type,price)=> {
+exports.storeTransaction = async (client,walletId ,idempotencyKey, type,price,reason)=> {
 
          const txRes = await client.query(
                 `INSERT INTO transactions 
-                 (wallet_id, idempotency_key, type, amount, reference, metadata) 
+                 (wallet_id, idempotency_key, type, amount, reason) 
                  VALUES ($1, $2, $3, $4, $5 ,$6) RETURNING *`,
-                [walletId, idempotencyKey, type,price]
+                [walletId, idempotencyKey, type,price,reason]
             );
 
-            return txRes;
+            return txRes.rows[0];
 
 }

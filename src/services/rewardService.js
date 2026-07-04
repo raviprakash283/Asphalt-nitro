@@ -7,7 +7,7 @@ exports.rewards = async(user_id)=>{
             [user_id]
           )
 
-          return rewardRes;
+          return { success : true , reward : rewardRes.rows[0]};
    
     }
     catch(err){

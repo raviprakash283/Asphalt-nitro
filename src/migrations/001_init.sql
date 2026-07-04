@@ -17,7 +17,6 @@ CREATE TABLE wallets (
 CREATE TABLE items (
     id BIGSERIAL PRIMARY KEY,
     title VARCHAR,
-    price DECIMAL(15,2) CHECK (price >= 0),
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -51,6 +50,7 @@ CREATE TABLE transactions (
     idempotency_key VARCHAR(255) UNIQUE NOT NULL,
     type VARCHAR(20) CHECK (type IN ('CREDIT', 'DEBIT')) NOT NULL,
     amount DECIMAL(15,2) NOT NULL CHECK (amount > 0),
+    reason VARCHAR,
     status VARCHAR(20) DEFAULT 'COMPLETED' CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED')),
     created_at TIMESTAMP DEFAULT NOW()
 );

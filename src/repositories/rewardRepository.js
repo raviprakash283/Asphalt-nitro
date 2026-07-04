@@ -14,5 +14,5 @@ exports.getClaimedRewards = async (client , user_id)=>{
             [user_id]
         );
 
-         return reward;
+         return reward.rows[0];
 }

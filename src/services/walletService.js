@@ -1,7 +1,8 @@
 const pool = require('../config/db');
 const {findByKey ,  storeTransaction } = require('../repositories/transactionRepository')
+const {getBalance} = require('../repositories/walletRepository');
 
-exports.credit = async (user_id, amount, idempotencyKey) => {
+exports.credit = async (user_id, amount, idempotencyKey,reason) => {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -28,7 +29,7 @@ exports.credit = async (user_id, amount, idempotencyKey) => {
             const wallet = walletRes.rows[0];
 
             // Create transaction record
-            const txRes = await storeTransaction(client,wallet.id,idempotencyKey,'CREDIT', amount )
+            const txRes = await storeTransaction(client,wallet.id,idempotencyKey,'CREDIT', amount ,reason)
             
 
             // Update balance
@@ -38,7 +39,7 @@ exports.credit = async (user_id, amount, idempotencyKey) => {
             );
 
             await client.query('COMMIT');
-            return { success: true, transaction: txRes.rows[0] };
+            return { success: true, transaction: txRes };
         } catch (err) {
             await client.query('ROLLBACK');
             throw err;
@@ -48,7 +49,7 @@ exports.credit = async (user_id, amount, idempotencyKey) => {
     }
 
 
-exports.purchase = async (user_id,item_id, idempotencyKey) => {
+exports.purchase = async (user_id,item_id, idempotencyKey,price) => {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -71,18 +72,6 @@ exports.purchase = async (user_id,item_id, idempotencyKey) => {
                 throw new Error('Item already exist in inventory');
             }
 
-            // get price of item
-            const itemRes = await client.query(
-                'SELECT price FROM items WHERE id = $1',
-                    [item_id]
-            );
-
-            if (itemRes.rows.length === 0) {
-                throw new Error('Item not found');
-            }
-
-                const price = itemRes.rows[0].price;
-
             // Lock wallet
             const walletRes = await client.query(
                 'SELECT * FROM wallets WHERE user_id = $1 FOR UPDATE',
@@ -94,8 +83,9 @@ exports.purchase = async (user_id,item_id, idempotencyKey) => {
                 await client.query('ROLLBACK');
                 throw new Error('Insufficient balance');
             }
-
-            const txRes = await storeTransaction(client,wallet.id,idempotencyKey,'DEBIT', price);
+            
+            const reason = "purchasing item";
+            const txRes = await storeTransaction(client,wallet.id,idempotencyKey,'DEBIT', price,reason);
             
 
             await client.query(
@@ -111,7 +101,7 @@ exports.purchase = async (user_id,item_id, idempotencyKey) => {
                 );
 
             await client.query('COMMIT');
-            return { success: true, transaction: txRes.rows[0] };
+            return { success: true, transaction: txRes };
         } catch (err) {
             await client.query('ROLLBACK');
             throw err;
@@ -119,3 +109,19 @@ exports.purchase = async (user_id,item_id, idempotencyKey) => {
             client.release();
         }
     }
+
+exports.getBalance = async(user_id)=>{
+      const client = await pool.connect();
+
+      try{
+           const balance = await getBalance(client, user_id);
+        return  { success:true , balance:balance};
+      }
+      catch(err){
+        throw err;
+      }
+      finally{
+        client.release();
+      }
+
+}
