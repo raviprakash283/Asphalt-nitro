@@ -51,9 +51,7 @@ CREATE TABLE transactions (
     idempotency_key VARCHAR(255) UNIQUE NOT NULL,
     type VARCHAR(20) CHECK (type IN ('CREDIT', 'DEBIT')) NOT NULL,
     amount DECIMAL(15,2) NOT NULL CHECK (amount > 0),
-    reference TEXT,
     status VARCHAR(20) DEFAULT 'COMPLETED' CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED')),
-    metadata JSONB,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
