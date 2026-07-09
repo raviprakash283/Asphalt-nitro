@@ -1,6 +1,6 @@
 const walletService = require('../services/walletService');
 const rewardService = require('../services/rewardService');
-const invetoryService = require('../services/inventoryService');
+const inventoryService = require('../services/inventoryService');
 
 exports.credit = async (req , res)=>{
 
@@ -56,7 +56,7 @@ exports.walletDetails = async(req,res) => {
            const rewards = await rewardService.rewards(user_id);
            const inventory = await inventoryService.inventory(user_id);
 
-           res.json({balance:balance , inventory:inventory , claimedRewards : rewards}).status(200);
+           res.json({balance:balance.balance , inventory:inventory.inventory , claimedRewards : rewards.reward}).status(200);
 
       }
       catch(err){

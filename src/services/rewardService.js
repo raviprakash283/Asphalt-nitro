@@ -3,11 +3,11 @@ const pool = require('../config/db');
 exports.rewards = async(user_id)=>{
          const client = await pool.connect();
     try{
-          const rewardRes = await client.query('SELECT * FROM rewards WHERE user_id = $1',
+          const rewardRes = await client.query('SELECT * FROM rewards_claimed WHERE user_id = $1',
             [user_id]
           )
 
-          return { success : true , reward : rewardRes.rows[0]};
+          return { success : true , reward : rewardRes.rows};
    
     }
     catch(err){
