@@ -1,6 +1,6 @@
 const { z } = require("zod");
 
-const rewardSchema = z.object({
+exports.rewardSchema = z.object({
     playerId: z
         .number({
             required_error: "playerId required",
@@ -10,6 +10,3 @@ const rewardSchema = z.object({
         .max(Number.MAX_SAFE_INTEGER), // Safe limit
 });
 
-module.exports = {
-    rewardSchema
-};

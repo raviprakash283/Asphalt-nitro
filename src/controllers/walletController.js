@@ -8,7 +8,10 @@ exports.credit = async (req , res)=>{
          const user_id = req.params.playerId;
          const amount = req.body.amount;
          const reason = req.body.reason;
-         const idempotencyKey = req.headers.idempotencyKey;
+         const idempotencyKey =  req.get('Idempotency-Key') || req.headers['idempotency-Key']
+                                           || req.headers['Idempotency-Key'];
+
+         console.log( req.body , req.params , req.headers)
 
          const Result = await walletService.credit(user_id,amount , idempotencyKey, reason);
 
@@ -30,7 +33,8 @@ exports.purchase = async (req,res)=> {
             const item_id = req.body.itemId;
             const price=    req.body.price;
 
-            const idempotencyKey = req.headers.idempotencyKey;
+            const idempotencyKey = req.get('Idempotency-Key') || req.headers['idempotency-Key']
+                                           || req.headers['Idempotency-Key'];
 
             const Result = await walletService.purchase(user_id, item_id , idempotencyKey , price);
             

@@ -10,7 +10,7 @@ exports.storeTransaction = async (client,walletId ,idempotencyKey, type,price,re
          const txRes = await client.query(
                 `INSERT INTO transactions 
                  (wallet_id, idempotency_key, type, amount, reason) 
-                 VALUES ($1, $2, $3, $4, $5 ,$6) RETURNING *`,
+                 VALUES ($1, $2, $3, $4, $5 ) RETURNING *`,
                 [walletId, idempotencyKey, type,price,reason]
             );
 

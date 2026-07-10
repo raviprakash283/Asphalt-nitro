@@ -23,15 +23,14 @@ exports.claimReward = async(user_id , reward_id)=>{
      const client = await pool.connect();
 
      try{
-          const rewardRes = await  client.query(
-            `INSERT INTO rewards_claimed (reward_id, user_id)
-            VALUES ($1, $2)
-            RETURNING *`,
-            [reward_id,user_id]
+
+          const existing = await client.query('SELECT * FROM rewards_claimed WHERE user_id = $1 AND reward_id=$2',
+            [user_id , reward_id]
           );
 
-          // Check if the reward was actually inserted
-        if (rewardRes.rowCount === 0) {
+
+               // Check if the reward was actually inserted
+        if (existing.rows[0]) {
             // Reward was already claimed by this user
             return {
                 success: false,
@@ -39,6 +38,16 @@ exports.claimReward = async(user_id , reward_id)=>{
                 alreadyClaimed: true
             };
         }
+
+
+          const rewardRes = await  client.query(
+            `INSERT INTO rewards_claimed (reward_id, user_id)
+            VALUES ($1, $2)
+            RETURNING *`,
+            [reward_id,user_id]
+          );
+
+     
 
         // Successfully claimed
         return {
