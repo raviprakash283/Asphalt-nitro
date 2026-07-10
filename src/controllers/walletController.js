@@ -19,7 +19,7 @@ exports.credit = async (req , res)=>{
                  return res.status(400).json(Result);
             }
 
-         res.json(Result).status(200);
+         res.json(Result).status(201);
      }
      catch(err){
         res.status(400).json({ error: err.message });
