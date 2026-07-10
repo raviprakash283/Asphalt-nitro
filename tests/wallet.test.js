@@ -5,7 +5,7 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
 const api = request(BASE_URL);
 
 const playerId = 1;
-const rewardId = 1;
+const rewardId = 2;
 const itemId =  3;
 
 const headers = (key) => ({

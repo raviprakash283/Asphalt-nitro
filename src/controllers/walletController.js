@@ -11,7 +11,9 @@ exports.credit = async (req , res)=>{
          const idempotencyKey =  req.get('Idempotency-Key') || req.headers['idempotency-Key']
                                            || req.headers['Idempotency-Key'];
 
-         console.log( req.body , req.params , req.headers)
+         if( ! idempotencyKey){
+          return res.status(400).json({error : "missing Idempotency-Key"})
+         }
 
          const Result = await walletService.credit(user_id,amount , idempotencyKey, reason);
 
@@ -35,6 +37,11 @@ exports.purchase = async (req,res)=> {
 
             const idempotencyKey = req.get('Idempotency-Key') || req.headers['idempotency-Key']
                                            || req.headers['Idempotency-Key'];
+
+            
+         if( ! idempotencyKey){
+          return res.status(400).json({error : "missing Idempotency-Key"})
+         }
 
             const Result = await walletService.purchase(user_id, item_id , idempotencyKey , price);
             
